@@ -13,6 +13,7 @@ def csvs_from_folder(folder_path):
 
     return pd.concat(dataframes, ignore_index=True)
 
+
 def filter_dataframe_by_tuples(df, filters):
     filtered_df = df.copy()
     
@@ -37,15 +38,39 @@ def read_filters_from_file(file_path):
     
     return filters
 
+
+def read_plot_data_from_file(file_path):
+    plot_data = []
+
+    with open(file_path, 'r') as file:
+        title = None
+        plots = []
+
+        for line in file:
+            line = line.strip()
+
+            if line:
+                if line.startswith('['):
+                    plot_info = eval(line)  
+                    plots.append(plot_info)
+                else:
+                    if title and plots:
+                        plot_data.append((title, plots))
+                    title = line
+                    plots = []
+
+        if title and plots:
+            plot_data.append((title, plots))
+
+    return tuple(plot_data)
+
+
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print('Please provide the folder path as an argument.')
-        sys.exit(1)
 
-    folder_path = sys.argv[1]
-    concatenated_dataframe = csvs_from_folder(folder_path)
+    #folder_path = sys.argv[1]
+    #concatenated_dataframe = csvs_from_folder(folder_path)
 
-    dataframes_dict = {}  # Dictionary to store DataFrames
+    dataframes_dict = {} 
     exit_program = False
 
     while not exit_program:
@@ -71,13 +96,18 @@ if __name__ == '__main__':
             except FileNotFoundError:
                 print("File not found. Please provide a valid file path.")
 
+        elif command == 'plot':
+            plot_file = 'plot.txt'
+            plot_data = read_plot_data_from_file(plot_file)
+            print(plot_data)  # Print the loaded plot data for demonstration purposes
+
         # Add more commands here...
 
         else:
             print("Unknown command. Please try again.")
 
     # Example usage of the filtered_dataframe_by_tuples function
-    filters_file = 'filter.txt'
-    filters = read_filters_from_file(filters_file)
-    filtered_df = filter_dataframe_by_tuples(concatenated_dataframe, filters)
-    print(filtered_df)
+    #filters_file = 'filter.txt'
+    #filters = read_filters_from_file(filters_file)
+    #filtered_df = filter_dataframe_by_tuples(concatenated_dataframe, filters)
+    #print(filtered_df)
