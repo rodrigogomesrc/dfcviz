@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def csvs_from_folder(folder_path):
     csv_files = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
@@ -43,26 +44,71 @@ def read_plot_data_from_file(file_path):
     plot_data = []
 
     with open(file_path, 'r') as file:
-        title = None
+        title = []
         plots = []
+        plot_data = []
 
         for line in file:
             line = line.strip()
 
             if line:
-                if line.startswith('['):
-                    plot_info = eval(line)  
-                    plots.append(plot_info)
+                if line.startswith('|'):
+                    plot_info = line.split('|')
+                    plot_info.pop(0) 
+                    plot_info.pop() 
+                    plot = [p.split(',') for p in plot_info]
+                    plots.append(plot)
+                    
                 else:
-                    if title and plots:
-                        plot_data.append((title, plots))
-                    title = line
-                    plots = []
+                    title.append(line)
 
-        if title and plots:
-            plot_data.append((title, plots))
+        for title, plot_info in zip(title, plots):
+            plot_data.append((title, plot_info))
 
     return tuple(plot_data)
+
+def create_subplots(data, dataframes_dict):
+    num_rows = len(data)
+    num_cols = len(data[0][1])
+
+    if num_rows == 1 and num_cols == 1:
+        fig, axes = plt.subplots()
+    else:
+        fig, axes = plt.subplots(num_rows, num_cols, figsize=(12, 10))
+
+    for i, (title, plots) in enumerate(data):
+        if num_rows == 1:
+            for j, plot_info in enumerate(plots):
+                ax = axes[j]
+                dataframe_key, coluna_plot, coluna_variavel, subplot_title = plot_info
+
+                df = dataframes_dict[dataframe_key]
+                unique_values = df[coluna_variavel].unique()
+
+                for value in unique_values:
+                    subset_df = df[df[coluna_variavel] == value]
+                    ax.plot(subset_df[coluna_plot], label=str(value))
+
+                ax.set_title(subplot_title)
+                ax.legend()
+        else:
+            for j, plot_info in enumerate(plots):
+                ax = axes[i, j]
+                dataframe_key, coluna_plot, coluna_variavel, subplot_title = plot_info
+
+                df = dataframes_dict[dataframe_key]
+                unique_values = df[coluna_variavel].unique()
+
+                for value in unique_values:
+                    subset_df = df[df[coluna_variavel] == value]
+                    ax.plot(subset_df[coluna_plot], label=str(value))
+
+                ax.set_title(subplot_title)
+                ax.legend()
+
+    plt.tight_layout()
+    plt.show()
+
 
 
 if __name__ == '__main__':
@@ -86,7 +132,7 @@ if __name__ == '__main__':
             name = command_parts[2]
 
             try:
-                df = pd.read_csv(path)
+                df = csvs_from_folder(path)
                 dataframes_dict[name] = df
                 print(f"DataFrame '{name}' concatenated and saved successfully.")
 
@@ -96,10 +142,12 @@ if __name__ == '__main__':
         elif command == 'plot':
             plot_file = 'plot.txt'
             plot_data = read_plot_data_from_file(plot_file)
+            print("\n")
+            print(plot_data)
+            print("\n")
+            create_subplots(plot_data, dataframes_dict)
 
-        # Add more commands here...
-
-         elif command.startswith('filter'):
+        elif command.startswith('filter'):
 
             command_parts = command.split()
             if len(command_parts) != 3:
