@@ -12,7 +12,7 @@ def csvs_from_folder(folder_path):
         df = pd.read_csv(file_path)
         dataframes.append(df)
 
-    return pd.concat(dataframes, ignore_index=True)
+    return pd.concat(dataframes, ignore_index=False)
 
 
 def filter_dataframe_by_tuples(df, filters):
@@ -110,16 +110,15 @@ def create_subplots(data, dataframes_dict):
     plt.show()
 
 
-
 if __name__ == '__main__':
 
     dataframes_dict = {} 
     exit_program = False
 
     while not exit_program:
-        command = input("Enter a command (or 'exit' to quit): ")
+        command = input("Enter a command (or 'exit' or to quit): ")
 
-        if command == 'exit':
+        if command == 'exit' or command == 'quit':
             exit_program = True
 
         elif command.startswith('concatenate'):
