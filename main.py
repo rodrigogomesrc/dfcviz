@@ -78,9 +78,9 @@ def create_subplots(data, dataframes_dict):
 
     for i, (title, plots) in enumerate(data):
         if num_rows == 1:
+            ax = axes[j]
             for j, plot_info in enumerate(plots):
-                ax = axes[j]
-                dataframe_key, coluna_plot, coluna_variavel, subplot_title = plot_info
+                dataframe_key, coluna_plot, coluna_variavel, _ = plot_info
 
                 df = dataframes_dict[dataframe_key]
                 unique_values = df[coluna_variavel].unique()
@@ -89,12 +89,12 @@ def create_subplots(data, dataframes_dict):
                     subset_df = df[df[coluna_variavel] == value]
                     ax.plot(subset_df[coluna_plot], label=str(value))
 
-                ax.set_title(subplot_title)
-                ax.legend()
+            ax.set_title(title)
+            ax.legend()
         else:
             for j, plot_info in enumerate(plots):
                 ax = axes[i, j]
-                dataframe_key, coluna_plot, coluna_variavel, subplot_title = plot_info
+                dataframe_key, coluna_plot, coluna_variavel, _ = plot_info
 
                 df = dataframes_dict[dataframe_key]
                 unique_values = df[coluna_variavel].unique()
@@ -103,7 +103,7 @@ def create_subplots(data, dataframes_dict):
                     subset_df = df[df[coluna_variavel] == value]
                     ax.plot(subset_df[coluna_plot], label=str(value))
 
-                ax.set_title(subplot_title)
+                ax.set_title(title)
                 ax.legend()
 
     plt.tight_layout()
@@ -141,9 +141,6 @@ if __name__ == '__main__':
         elif command == 'plot':
             plot_file = 'plot.txt'
             plot_data = read_plot_data_from_file(plot_file)
-            print("\n")
-            print(plot_data)
-            print("\n")
             create_subplots(plot_data, dataframes_dict)
 
         elif command.startswith('filter'):
