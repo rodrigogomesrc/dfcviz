@@ -76,8 +76,6 @@ def create_subplots(data, dataframes_dict):
         fig, axes = plt.subplots(num_rows, num_cols, figsize=(12, 10))
 
     for i, (title, plots) in enumerate(data):
-
-        print(plots)
         if num_rows == 1:
             ax = axes[j]
             for j, plot_info in enumerate(plots):
