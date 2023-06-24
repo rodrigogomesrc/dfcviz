@@ -55,7 +55,6 @@ def read_plot_data_from_file(file_path):
                 if line.startswith('|'):
                     plot_info = line.split('|')
                     plot_info.pop(0) 
-                    plot_info.pop() 
                     plot = [p.split(',') for p in plot_info]
                     plots.append(plot)
                     
@@ -77,10 +76,12 @@ def create_subplots(data, dataframes_dict):
         fig, axes = plt.subplots(num_rows, num_cols, figsize=(12, 10))
 
     for i, (title, plots) in enumerate(data):
+
+        print(plots)
         if num_rows == 1:
             ax = axes[j]
             for j, plot_info in enumerate(plots):
-                dataframe_key, coluna_plot, coluna_variavel, _ = plot_info
+                dataframe_key, coluna_plot, coluna_variavel, titulo = plot_info
 
                 df = dataframes_dict[dataframe_key]
                 unique_values = df[coluna_variavel].unique()
@@ -89,12 +90,12 @@ def create_subplots(data, dataframes_dict):
                     subset_df = df[df[coluna_variavel] == value]
                     ax.plot(subset_df[coluna_plot], label=str(value))
 
-            ax.set_title(title)
+            ax.set_title(titulo)
             ax.legend()
         else:
             for j, plot_info in enumerate(plots):
                 ax = axes[i, j]
-                dataframe_key, coluna_plot, coluna_variavel, _ = plot_info
+                dataframe_key, coluna_plot, coluna_variavel, titulo = plot_info
 
                 df = dataframes_dict[dataframe_key]
                 unique_values = df[coluna_variavel].unique()
@@ -103,7 +104,7 @@ def create_subplots(data, dataframes_dict):
                     subset_df = df[df[coluna_variavel] == value]
                     ax.plot(subset_df[coluna_plot], label=str(value))
 
-                ax.set_title(title)
+                ax.set_title(titulo)
                 ax.legend()
 
     plt.tight_layout()

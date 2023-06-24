@@ -4,6 +4,9 @@ import sys
 
 
 def add_column_to_csvs(folder_path, column_name, value):
+
+    print("working with folder " + folder_path)
+
     csv_files = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
 
     for file_name in csv_files:
@@ -33,11 +36,11 @@ def add_column_to_csvs(folder_path, column_name, value):
 
 
 if len(sys.argv) != 4:
-    print("Usage: python add_column_to_csv.py folder_path column_name value")
+    print("Usage: python3 add_column_to_csv.py folder_path column_name value")
     sys.exit(1)
 
 folder_path = sys.argv[1]
 column_name = sys.argv[2]
 value = sys.argv[3]
 
-add_column_to_csv(folder_path, column_name, value)
+add_column_to_csvs(folder_path, column_name, value)
