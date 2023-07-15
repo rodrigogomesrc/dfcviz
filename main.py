@@ -77,7 +77,7 @@ def create_subplots(data, dataframes_dict):
 
     for i, (title, plots) in enumerate(data):
         if num_rows == 1:
-            ax = axes[j]
+            ax = axes[i]
             for j, plot_info in enumerate(plots):
                 dataframe_key, coluna_plot, coluna_variavel, titulo = plot_info
 
